@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button} from 'react-native';
+import {Button, NativeModules, NativeEventEmitter } from 'react-native';
 // import { Svg, Path, Rect } from 'react-native-svg';
 // import Animated, { runOnUI, useDerivedValue, withTiming } from 'react-native-reanimated';
 // import { measure, useSharedValue, Easing, useAnimatedProps, useAnimatedReaction, useAnimatedRef } from 'react-native-reanimated';
@@ -8,9 +8,38 @@ import {Button} from 'react-native';
 
 // const d = "M66.039,133.545c0,0-21-57,18-67s49-4,65,8s30,41,53,27s66,4,58,32s-5,44,18,57s22,46,0,45s-54-40-68-16s-40,88-83,48s11-61-11-80s-79-7-70-41C46.039,146.545,53.039,128.545,66.039,133.545z"
 
-
+const { ImagePickerModule, ToastExample } = NativeModules;
 
 const App = () => {
+    React.useEffect(() => {
+        // //pick image
+        // ImagePickerModule.pickImage()
+        //     .then(res => console.log("path:", res))
+        //     .catch(e => console.log(e));
+
+        //Toast with callback, promise, event that supported by React Native
+        
+        //1.Callback
+        // ToastExample.useCallback((data) => {
+        //     console.log("data", data)
+        // })
+
+        //2.Promise
+        // ToastExample.usePromise()
+        //     .then(res => console.log("promise", res))
+        //     .catch(e => console.log(e))
+
+        //3.Send Event
+        ToastExample.show("Start Event", 3000);
+
+        let eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
+        let eventListener = eventEmitter.addListener("EventReminder", event => {
+            console.log("event", event.eventProperty);
+        });
+
+        return () => eventListener.remove();
+
+    }, [])
     // let refPath = React.useRef();
     // let [length, setLength] = React.useState(0);
     // let progress = useSharedValue(0);
